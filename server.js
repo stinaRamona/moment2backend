@@ -1,9 +1,10 @@
 const express = require('express'); 
-//const sqlite = require('sqlite3').verbose(); 
+const sqlite3 = require('sqlite3').verbose(); 
 const cors = require('cors'); 
 
 const app = express(); 
-const port= 3000; 
+const port= 3000;
+const db = new sqlite3.Database("./db/experience.db"); 
 
 app.use(express.json()); 
 app.use(cors()); 
