@@ -91,7 +91,15 @@ app.put('/api/workexp/:id', (req, res) => {
 
 //för att radera en post 
 app.delete('/api/workexp/:id', (req, res) => {
-    res.json({message: 'Tar bort post med id:' + req.params.id}); 
+    let id = req.params.id
+
+    db.run("DELETE FROM workexp WHERE id=?;", id, (err) => {
+        console.log(err); 
+
+        res.json({message: 'Tar bort post med id:' + id});
+
+    })
+
 }); 
 
 //sätter igång servern
