@@ -15,8 +15,23 @@ app.get('/api', (req, res) =>{
 }); 
 
 app.get('/api/workexp', (req, res) => {
-    res.json({message: 'Tidigare erfarenheter:'})
+    
+    db.all("SELECT * FROM workexp;", (err, result) =>{
+        if(err) {
+            res.status(500).json({error: "något gick fel!" + err});
+            return; 
+        }
+
+        if(result.length === 0) {
+            res.status(404).json({message: "Inga poster finns!"}); 
+
+        } else {
+            res.json(result); 
+        } 
+    }); 
+
 }); 
+
 
 //För att lägga till
 app.post('/api/workexp', (req, res) => { 
@@ -25,15 +40,7 @@ app.post('/api/workexp', (req, res) => {
     let company = req.body.company; 
     let title = req.body.title; 
     let description = req.body.description; 
-    let location = req.body.location; 
-
-    //värden från body sparas i objekt
-    let workexp = {
-        company: company,
-        title: title, 
-        description: description, 
-        location: location
-    }; 
+    let location = req.body.location;  
 
     //objekt för felmeddelanden 
     let errors = {
@@ -55,8 +62,26 @@ app.post('/api/workexp', (req, res) => {
         return; 
     }
 
-    //annars postas att förfrågan är godkänd och det nya objektet 
-    res.json({message: 'POST förfrågan godkänd', workexp}); 
+    //lägger in erfarenhet i databasen 
+    db.run("INSERT INTO workexp(companyname, jobtitle, description, location) VALUES(?, ?, ?, ?);", [company, title, description, location], (err, result) => {
+        if(err) {
+            res.status(500).json({error: "något gick fel!" + err});
+            return; 
+        }; 
+
+        console.log("Förfårgan skapad:" + result); 
+        
+        //värden från body sparas i objekt
+        let workexp = {
+            company: company,
+            title: title, 
+            description: description, 
+            location: location
+        };
+
+        //annars postas att förfrågan är godkänd och det nya objektet 
+        res.json({message: 'POST förfrågan godkänd', workexp});
+    });  
 });
 
 //för att uppdatera en post
