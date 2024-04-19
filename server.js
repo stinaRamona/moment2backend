@@ -86,7 +86,20 @@ app.post('/api/workexp', (req, res) => {
 
 //för att uppdatera en post
 app.put('/api/workexp/:id', (req, res) => {
-    res.json({message: 'Uppdatering av post med id:' + req.params.id}); 
+    let id = req.params.id 
+
+    //variabler sparas från body
+    let company = req.body.company; 
+    let title = req.body.title; 
+    let description = req.body.description; 
+    let location = req.body.location;
+
+    db.run("UPDATE workexp SET company=?, title=?, description=?, location=? WHERE id=?;", [company, title, description, location, id], (err) => {
+        console.log(err); 
+
+        res.json({message: 'Uppdatering av post med id:' + req.params.id});
+    })
+ 
 });
 
 //för att radera en post 
